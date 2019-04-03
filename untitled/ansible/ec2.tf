@@ -20,8 +20,12 @@ output "" {
   value = "${data.aws_security_groups.security.ids}"
 }
 
-variable "private_key" {
-  default = "~/.ssh/NVirginia_home.pem"
+variable "private_key_path" {
+  default = "~/.ssh/NVirginia.pem"
+}
+
+variable "key_instance" {
+  default = "NVirginia"
 }
 
 variable "user_name" {
@@ -31,7 +35,7 @@ resource "aws_instance" "redhat_instance" {
   ami = "ami-0a313d6098716f372"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${data.aws_security_groups.security.ids}"]
-  key_name = "NVirginia_home"
+  key_name = "${var.key_instance}"
   tags {
     Name = "${var.user_name}"
   }
@@ -43,7 +47,7 @@ resource "aws_instance" "redhat_instance" {
     connection {
       type = "ssh"
       user = "${var.user_name}"
-      private_key = "${file("~/.ssh/NVirginia_home.pem")}"
+      private_key = "${file("~/.ssh/NVirginia.pem")}"
     }
   }
 
@@ -55,7 +59,7 @@ resource "aws_instance" "redhat_instance" {
     connection {
       type = "ssh"
       user = "${var.user_name}"
-      private_key = "${file("~/.ssh/NVirginia_home.pem")}"
+      private_key = "${file("~/.ssh/NVirginia.pem")}"
     }
   }
 
@@ -65,18 +69,18 @@ resource "aws_instance" "redhat_instance" {
     connection {
       type = "ssh"
       user = "${var.user_name}"
-      private_key = "${file("~/.ssh/NVirginia_home.pem")}"
+      private_key = "${file("~/.ssh/NVirginia.pem")}"
     }
   }
 
   provisioner "file" {
-    source = "~/.ssh/NVirginia_home.pem"
-    destination = "~/.ssh/NVirginia_home.pem"
+    source = "${var.private_key_path}"
+    destination = "${var.private_key_path}"
   }
   connection {
     type = "ssh"
     user = "${var.user_name}"
-    private_key = "${file("~/.ssh/NVirginia_home.pem")}"
+    private_key = "${file("~/.ssh/NVirginia.pem")}"
   }
 }
 
